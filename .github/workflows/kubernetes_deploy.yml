@@ -21,6 +21,15 @@ on:
         options:
           - yes
           - no
+      create_k8s_cluster:
+        description: "Choose wether or not you want to create a k8s"
+        required: true
+        default: "yes"
+        type: choice
+        options:
+          - yes
+          - no
+      
 
 
 jobs:
@@ -57,7 +66,22 @@ jobs:
         curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp 
         sudo mv /tmp/eksctl /usr/local/bin/
 
+    - name: Install eksctl
+      if: ${{ github.event.inputs.create_k8s_cluster == 'yes' }}
+      run: |
+        chmod +x eks-install.sh
+        ./eks-install.sh
+
+    - name: Export kubeconfig
+      if: ${{ github.event.inputs.create_k8s_cluster == 'yes' }}
+      run: |
+        sleep 300
+        export KUBECONFIG=$HOME/.kube/config
+        
+
+
     - name: Set up Kubeconfig
+      if: ${{ github.event.inputs.create_k8s_cluster == 'no' }}
       run: |
         mkdir -p  $HOME/.kube
         echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
