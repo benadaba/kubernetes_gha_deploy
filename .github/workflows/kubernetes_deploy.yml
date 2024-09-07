@@ -8,7 +8,7 @@ on:
       deploy_app:
         description: "Do you want to deploy the app to k8s?"
         required: true
-        default: "no"
+        default: "yes"
         type: choice
         options:
           - yes
@@ -46,6 +46,13 @@ jobs:
       run: |
         curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp 
         sudo mv /tmp/eksctl /usr/local/bin/
+
+    - name: Set up Kubeconfig
+      run: |
+        mkdir -p  $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+        export KUBECONFIG=$HOME/.kube/config
+
 
     - name: Deploy App to EKS cluster
       if: ${{ github.event.inputs.deploy_app == 'yes' }}
