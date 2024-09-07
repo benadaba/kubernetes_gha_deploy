@@ -48,7 +48,7 @@ jobs:
         sudo mv /tmp/eksctl /usr/local/bin/
 
     - name: Deploy App to EKS cluster
-      if: ${{ github.event.inputs.deploy_app == "yes" }}
+      if: ${{ github.event.inputs.deploy_app == 'yes' }}
       run: |
         echo "Deploying toystore app to EKS Cluster ..."
         kubectl apply -f deployment.yml
