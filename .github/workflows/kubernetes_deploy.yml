@@ -77,13 +77,13 @@ jobs:
 
 
     - name: Install eksctl
-      # if: ${{ github.event.inputs.create_k8s_cluster == 'create' }}
+      if: ${{ github.event.inputs.create_k8s_cluster == 'create' }}
       run: |
         chmod +x eks-install.sh
         ./eks-install.sh
 
     - name: Export kubeconfig
-      # if: ${{ github.event.inputs.create_k8s_cluster == 'create' }}
+      if: ${{ github.event.inputs.create_k8s_cluster == 'create' }}
       run: |
         export KUBECONFIG=$HOME/.kube/config
         
