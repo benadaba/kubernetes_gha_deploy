@@ -3,6 +3,18 @@ name: kubernetes workflow Deploy
 on:
   push:
 
+  workflow_dispatch:
+    inputs:
+      deploy_app:
+        description: "Do you want to deploy the app to k8s?"
+        required: true
+        default: "no"
+        type: choice
+        options:
+          - yes
+          - no
+
+
 jobs:
   build-run-docker-image:
     runs-on: ubuntu-latest
