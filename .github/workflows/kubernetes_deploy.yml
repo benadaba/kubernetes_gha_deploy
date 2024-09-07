@@ -3,7 +3,7 @@ name: kubernetes workflow Deploy
 on:
   push:
 
-  workflow_dispatch:
+  workflow_dispatch: # allows you to manually run the workflow
     inputs:
       deploy_app:
         description: "Do you want to deploy the app to k8s?"
@@ -48,6 +48,7 @@ jobs:
         sudo mv /tmp/eksctl /usr/local/bin/
 
     - name: Deploy App to EKS cluster
+      if: ${{ github.event.inputs.deploy_app == "yes" }}
       run: |
         echo "Deploying toystore app to EKS Cluster ..."
         kubectl apply -f deployment.yml
