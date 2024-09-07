@@ -34,3 +34,9 @@ jobs:
       run: |
         curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp 
         sudo mv /tmp/eksctl /usr/local/bin/
+
+    - name: Deploy App to EKS cluster
+      run: |
+        echo "Deploying toystore app to EKS Cluster ..."
+        kubectl apply -f deployment.yml
+        kubectl apply -f service.yml
