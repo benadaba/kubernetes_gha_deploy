@@ -24,11 +24,13 @@ on:
       create_k8s_cluster:
         description: "Choose wether or not you want to create a k8s"
         required: true
-        default: "yes"
+        default: "delete"
         type: choice
         options:
-          - yes
-          - no
+          - create
+          - delete
+          - both
+          - nothing
       
 
 
@@ -73,34 +75,37 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-2
 
-        
+
     - name: Install eksctl
-      # if: ${{ github.event.inputs.create_k8s_cluster == 'yes' }}
+      # if: ${{ github.event.inputs.create_k8s_cluster == 'create' }}
       run: |
         chmod +x eks-install.sh
         ./eks-install.sh
 
     - name: Export kubeconfig
-      # if: ${{ github.event.inputs.create_k8s_cluster == 'yes' }}
+      # if: ${{ github.event.inputs.create_k8s_cluster == 'create' }}
       run: |
-        sleep 300
         export KUBECONFIG=$HOME/.kube/config
         
 
 
     - name: Set up Kubeconfig
-      if: ${{ github.event.inputs.create_k8s_cluster == 'no' }}
+      if: ${{ github.event.inputs.create_k8s_cluster == 'nothing' }}
       run: |
         mkdir -p  $HOME/.kube
         echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
         export KUBECONFIG=$HOME/.kube/config
     
     
-
-
     - name: Deploy App to EKS cluster
       # if: ${{ github.event.inputs.deploy_app == 'yes' }}
       run: |
         echo "Deploying toystore app to EKS Cluster ..."
         kubectl apply -f deployment.yml
         kubectl apply -f service.yml
+
+    - name: Delete cluster
+      if: ${{ github.event.inputs.create_k8s_cluster == 'delete' }}
+      run: |
+        echo "Deleting EKS Cluster ..."
+        eksctl delete cluster  ghaClusterAutomated --region eu-west-2
