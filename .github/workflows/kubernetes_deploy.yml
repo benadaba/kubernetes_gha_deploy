@@ -8,11 +8,11 @@ on:
       deploy_app:
         description: "Do you want to deploy the app to k8s?"
         required: true
-        default: "yes"
+        default: "nope"
         type: choice
         options:
-          - yes
-          - no
+          - deploy
+          - nope
       build_docker:
         description: "Do you want to build docker image?"
         required: true
@@ -98,7 +98,7 @@ jobs:
     
     
     - name: Deploy App to EKS cluster
-      # if: ${{ github.event.inputs.deploy_app == 'yes' }}
+      if: ${{ github.event.inputs.deploy_app == 'deploy' }}
       run: |
         echo "Deploying toystore app to EKS Cluster ..."
         kubectl apply -f deployment.yml
